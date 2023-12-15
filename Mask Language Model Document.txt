@@ -1,0 +1,75 @@
+#! document about Mask Language Model:
+
+Notice: Image1 and Image2 are....
+
+What i dont know: What is image1 and image2 and text1 and text2. 
+
+dataset format: 
+
+1. get the encoder(online model and momentum model) from bertMaskLM.pretrain. 
+2. Create mask(input_ids=input_ids,vocab_size=30522, targets=labels,probability_matrix=probability_matrix)
+	- input_ids: text1.input_ids means id of that text in dataset.
+	- Vocab_size = 30522: means The size of the token space. 
+	- labels = input_ids
+	- Probability_matrix: percentage mask in that sentence
+	- Output: input_ids, labels. 
+	- Return input_ids after replace some index with random word(or value)
+	- Return labels which show the position that it mask (true value == the position being replace in input_ids is not -100)
+
+3. Create attention mask with size = input_ids.shape
+4. logits_m = text_encoder_m(
+    input_ids,
+    attention_mask = attention_mask,
+    encoder_hidden_states = image_embeds,
+    encoder_attention_mask = image_atts,
+    return_dict = True,
+    return_logits = True
+) -> this means it will be some probability about word predictions and apply softmax prediction = F.softmax(logits_m,dim=-1)
+5. Calculate loss_mlm:
+mlm_output = text_encoder(input_ids,
+                        attention_mask=attention_mask,
+                        encoder_hidden_states=image_embeds,
+                        encoder_attention_mask=image_atts,
+                        return_dict=True,
+                        labels=labels,
+                        soft_labels=prediction,
+                        alpha=alpha
+                        )
+loss_mlm = mlm_output.loss
+6. Generate mrtd_logits_m:
+mrtd_logits_m = text_encoder_m(
+    mrtd_input_ids,
+    attention_mask = attention_mask,
+    encoder_hidden_states = image_embeds_m,
+    encoder_attention_mask = image_atts,
+    return_dict = True,
+    return_logits = True
+) -> just like logits_m but with update image_embeds_m
+weights = F.softmax(mrtd_logits_m,dim=-1)
+7. Generate mrtd_mask_modeling:
+	- mrtd_mask_modeling(mrtd_input_ids,text1_input_ids,attention_mask,weights)
+	- new id after doing mask stuff mrtd_input_ids = mask(input_ids = mrtd_input_ids,vocab_size=30522,probability_matrix=probability_matrix)
+	- text1_input_ids: original input_ids
+	- attention_masks: original attention_masks
+	- Weights: above. 
+	- Output: mrtd_input_ids, mrtd_labels
+	- Return mrtd_input_ids: new prediction with mask and new weights 
+	- Return mrtd_labels: new tensor 0 1 with mask position. 
+
+8. Generate output_mrtd:
+output_mrtd = text_encoder.bert(
+    mrtd_input_ids,
+    attention_mask = attention_mask,
+    encoder_hidden_states = image_embeds,
+    encoder_attention_mask = image_atts,
+    return_dict = True
+)
+9. find loss_mrtd:
+text_width = text_encoder.config.hidden_size
+mrtd_head = nn.Linear(text_width,2)
+mrtd_output = mrtd_head(output_mrtd.last_hidden_state.view(-1,text_width))
+
+loss_mrtd = F.cross_entropy(mrtd_output,mrtd_labels.view(-1))
+print("This is my loss_mrtd: {}".format(loss_mrtd))
+
+	
