@@ -1,0 +1,63 @@
+def remove_color_word(text):
+    mark = []
+    for char in text.split():
+        if char in color_words:
+            #! there is a color in color word then it is one. 
+            mark.append(1) 
+        else:
+            mark.append(0) 
+    my_mark_str = ''.join(str(item) for item in mark) #! my mark str is 10101...
+    
+    
+    
+    text_list = text.split()
+    
+    #! erase all the color have and word.
+    if ("101" or "1001") in my_mark_str:
+        index = my_mark_str.find("101")
+        index_4_num = my_mark_str.find("1001")
+        del text_list[index:index+3] 
+        del text_list[index_4_num-3:index_4_num+1] 
+        my_mark_str = my_mark_str.replace("101","")
+        my_mark_str = my_mark_str.replace("1001","")
+    
+    #! commit: remove all the color in sentence: find all the 1 in the mark str, get the index and delete it. 
+    
+    
+    
+    while my_mark_str.find("1") != -1:
+        index_have_1 = my_mark_str.find("1")
+        text_list[index_have_1] = ""
+        my_list_mark_str = list(my_mark_str)
+        my_list_mark_str[index_have_1] = "0"
+        my_mark_str = ''.join(my_list_mark_str)
+    return ' '.join(text_list)
+    
+#! test case: 20 cau. 
+result: 
+0. This is my original text: A woman walking next to an animal wearing a full length dress and dark coloured shoes. A women wearing a long blue and green dress. She has a pair of sandals on her feet and is walking a dog.
+This is my text after remove all color: A woman walking next to an animal wearing a full length dress and dark coloured shoes. A women wearing a long dress. She has a pair of sandals on her feet and is walking a dog.
+
+1. This is my original text: The woman is wearing knee-length blue shorts and a green and grey striped shirt. She is holding a white purse in her left hand. The girl has long black hair with bangs. Her hair is pulled forward on her shoulders. She is wearing a shirt sleeve white and mint green shirt with dark coloured shorts. She us carrying something white in her left hand.
+This is my text after remove all color: The woman is wearing knee-length  shorts and a striped shirt. She is holding a  purse in her left hand. The girl has long  hair with bangs. Her hair is pulled forward on her shoulders. She is wearing a shirt sleeve shirt with dark coloured shorts. She us carrying something  in her left hand.
+
+2. This is my original text: The girl has long black hair hanging down, a white shirt, blue knee length shorts, flip flops, and is reading while walking. The woman has dark hair that reaches past her shoulders. She is wearing a white short sleeved shirt, dark blue jean shorts that end just above her knee with flip flop style sandals. She is looking down at a white object in her hands.
+This is my text after remove all color: The girl has long  hair hanging down, a knee length shorts, flip flops, and is reading while walking. The woman has dark hair that reaches past her shoulders. She is wearing a  short sleeved shirt, dark  jean shorts that end just above her knee with flip flop style sandals. She is looking down at a  object in her hands.
+
+3. This is my original text: The man has a white shirt on and black pants. He is wearing blue and white Nike's and also has glasses. A man wearing a white shirt, a pair of black pants and a pair of shoes.
+This is my text after remove all color: The man has a  shirt on and  pants. He is wearing Nike's and also has glasses. A man wearing a  shirt, a pair of  pants and a pair of shoes.
+
+4. This is my original text: A young woman with long dark hair is wearing a short sleeved white top with a pink decoration, blue jeans and white sneakers is walking in an outdoor area while holding a pink bag. A skinny woman walks through an alley wearing a white shirt, jeans and tennis shoes.
+This is my text after remove all color: A young woman with long dark hair is wearing a short sleeved  top with sneakers is walking  an outdoor area while holding a pink bag. A skinny  walks through an alley wearing a white shirt, jeans and  shoes.
+
+5. This is my original text: The woman has black hair in a ponytail. She is in a white t shirt, with blue jeans and white tennis shoes. There is a dark band on her left wrist. She is carrying a pink and purple shopping bag A woman wearing a white shirt, a pair of blue jeans and a pair of white shoes.
+This is my text after remove all color: The woman has  hair in a ponytail. She is in a  jeans and white tennis shoes. There is a dark band on her left wrist. She is carrying a shopping bag A woman wearing a  shirt, a pair of  jeans and a pair of  shoes.
+
+6. This is my original text: He has a white shirt, black pants and black shoes. He is carrying a black bag. A man wearing a white shirt, a pair of black pants and a pair of black shoes on his feet.
+This is my text after remove all color: He has shoes. He is  a black bag. A man  a white shirt, a pair  black pants and a  of black shoes on his 
+
+7. This is my original text: A woman wearing a yellow and brown blouse with a belt around her waist, a pair of black pants and a pair of Gray boots. A young woman in a brown dress with dark hair pulled back in a ponytail standing near a car
+This is my text after remove all color: A woman wearing a blouse with a belt around her waist, a pair of  pants and a pair of Gray boots. A young woman in a  dress with dark hair pulled back in a ponytail standing near a car
+
+8. This is my original text: A man is wearing grey pants, blue blazer, and what looks like should be a white shirt. Haw is also holding a blue object. The young man is wearing a grey pair of pants, white shirt and a blue blazer jacket. He is holding some books in his hands.
+This is my text after remove all color: A man is wearing blazer, and what looks like should be a  shirt. Haw is also holding a  object. The young man is wearing a  pair of pants,  shirt and a  blazer jacket. He is holding some books in his hands.
